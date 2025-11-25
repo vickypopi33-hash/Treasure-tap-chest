@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treasure Tap Leaderboard</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f7d788;
+    text-align: center;
+  }
+  #treasure {
+    width: 200px;
+    height: 200px;
+    background: url('treasure.png') no-repeat center;
+    background-size: contain;
+    margin: 20px auto;
+    cursor: pointer;
+  }
+  #coins {
+    font-size: 25px;
+    margin: 10px;
+  }
+  #leaderboard {
+    background: white;
+    padding: 10px;
+    margin-top: 20px;
+    border-radius: 10px;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Treasure Tap</h1>
+
+<div>
+  <input id="username" placeholder="Enter your name" />
+  <button onclick="saveName()">Start</button>
+</div>
+
+<div id="game" style="display:none;">
+  <div id="coins">Coins: 0</div>
+  <div id="treasure"></div>
+  <button onclick="submitScore()">Submit Score</button>
+</div>
+
+<h2>Leaderboard</h2>
+<div id="leaderboard"></div>
+
+<script>
+let coins = 0;
+let username = "";
+let leaderboard = JSON.parse(localStorage.getItem("leaderboard") || "[]");
+
+function saveName() {
+  const nameInput = document.getElementById("username").value;
+  if (!nameInput) return alert("Enter a name!");
+  username = nameInput;
+  document.getElementById("game").style.display = "block";
+}
+
+document.getElementById("treasure").addEventListener("click", () => {
+  coins++;
+  document.getElementById("coins").innerText = "Coins: " + coins;
+});
+
+function submitScore() {
+  leaderboard.push({ name: username, score: coins });
+  leaderboard.sort((a,b) => b.score - a.score);
+  localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+  loadLeaderboard();
+  alert("Score submitted!");
+}
+
+function loadLeaderboard() {
+  let html = "";
+  leaderboard.slice(0, 20).forEach((player, index) => {
+    html += `<p>${index+1}. ${player.name} — ${player.score} coins</p>`;
+  });
+  document.getElementById("leaderboard").innerHTML = html;
+}
+
+loadLeade
